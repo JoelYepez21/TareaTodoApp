@@ -97,7 +97,6 @@ body {
 }
 .tachado{
     text-decoration: line-through white 0.2rem;
-    background-color: #4d5969;
     opacity: 0.5;
 }
 .button-eliminar{

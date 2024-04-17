@@ -6,7 +6,7 @@ const listaTareas = document.querySelector('#lista-padre');
 
 // arrays
 let tareasArray = [];
-let tareasCompletasArray = [];
+// let tareasCompletasArray = [];
 
 //functions 
 const validationTarea = (input) => {
@@ -40,50 +40,51 @@ const renderTareas = () => {
       </button>
         `;
         if (tarea.check === true) {
-            li.classList.add('tachado');
-            li.children[0].disabled = true;
-            li.children[0].classList.remove('button-eliminar');
-            li.children[0].classList.add('button-eliminado');
+            li.children[1].classList.add('tachado');
+            // li.children[0].disabled = true;
+            // li.children[0].classList.remove('button-eliminar');
+            // li.children[0].classList.add('button-eliminado');
             li.children[2].disabled = true;
             li.children[2].classList.remove('button-completar');
             li.children[2].classList.add('button-completo');
+            li.children[2].classList.add('tachado');
         }
         listaTareas.append(li);
     });
     document.querySelector('#contador-total').children[1].innerHTML = tareasArray.length;
-    document.querySelector('#contador-completa').children[1].innerHTML = tareasCompletasArray.length
-    document.querySelector('#contador-incompleta').children[1].innerHTML = tareasArray.length - tareasCompletasArray.length;
+    document.querySelector('#contador-completa').children[1].innerHTML = tareasArray.filter(tarea => tarea.check).length;
+    document.querySelector('#contador-incompleta').children[1].innerHTML = tareasArray.filter(tarea => !tarea.check).length;
 }
-const getTareas = () =>{
+const getTareas = () => {
     const tareasDb = localStorage.getItem('tareas');
     const tareaCompletaDb = localStorage.getItem('tareaCompleta');
-    if(localStorage.getItem('tareas')){
+    if (localStorage.getItem('tareas')) {
         tareasArray = JSON.parse(tareasDb);
     }
-    if (localStorage.getItem('tareaCompleta')) {
-        tareasCompletasArray = JSON.parse(tareaCompletaDb);
-    }
+    // if (localStorage.getItem('tareaCompleta')) {
+    //     tareasCompletasArray = JSON.parse(tareaCompletaDb);
+    // }
     renderTareas();
 }
 getTareas();
 
 //events
-inpuTarea.addEventListener('input', e => {validationTarea(inpuTarea);});
+inpuTarea.addEventListener('input', e => { validationTarea(inpuTarea); });
 
 from.addEventListener('submit', e => {
     e.preventDefault();
-    
+
     //create new object
     const newTarea = {
-        id : crypto.randomUUID(),
-        descripcion: inpuTarea.value, 
+        id: crypto.randomUUID(),
+        descripcion: inpuTarea.value,
         check: false,
     }
     //add to array
     tareasArray = tareasArray.concat(newTarea);
     //save in storage
     localStorage.setItem('tareas', JSON.stringify(tareasArray));
-    
+
     inpuTarea.value = '';
     validationTarea(inpuTarea);
     renderTareas();
@@ -91,32 +92,32 @@ from.addEventListener('submit', e => {
 
 listaTareas.addEventListener('click', e => {
     const deleteBtn = e.target.closest('#button-eliminar');
-    const checkBtn = e.target. closest('#button-completar');
+    const checkBtn = e.target.closest('#button-completar');
     //delete
     if (deleteBtn) {
         const id = deleteBtn.parentElement.id;
         tareasArray = tareasArray.filter(tarea => {
-         if (tarea.id !== id) {
-            return tarea; 
-         }
+            if (tarea.id !== id) {
+                return tarea;
+            }
         });
         localStorage.setItem('tareas', JSON.stringify(tareasArray));
         renderTareas();
     }
     //check
-    if(checkBtn){
-        tareasArray.forEach(tarea =>{
+    if (checkBtn) {
+        tareasArray.forEach(tarea => {
             if (tarea.id === checkBtn.parentElement.id) {
                 tarea.check = true;
             }
         });
         localStorage.setItem('tareas', JSON.stringify(tareasArray));
-        tareasCompletasArray = tareasArray.filter(tarea =>{
-            if(tarea.check === true){
-                return tarea
-            }
-        });
-        localStorage.setItem('tareaCompleta', JSON.stringify(tareasCompletasArray));
+        // tareasCompletasArray = tareasArray.filter(tarea => {
+        //     if (tarea.check === true) {
+        //         return tarea
+        //     }
+        // });
+        // localStorage.setItem('tareaCompleta', JSON.stringify(tareasCompletasArray));
         renderTareas();
     }
 })
